@@ -1,0 +1,11 @@
+*.png
+*.jpg
+*.gif
+img/
+out/
+out_img/
+tmp/
+*.pdf
+*.pptx
+*.docx
+*.DS_Store
