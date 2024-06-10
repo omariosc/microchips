@@ -160,6 +160,11 @@ def main(folder, input_folder, output_folder):
     plt.savefig(os.path.join(output_folder, "ratio_plot.png"))
     plt.savefig(os.path.join(f"out_img/ratio_plot_{folder}.png"))
     # plt.show()
+    
+    # Write a txt file with the ratios
+    with open(os.path.join(output_folder, "ratios.txt"), "w") as f:
+        for i, ratio in enumerate(ratios):
+            f.write(f"{hours[i]}h: {ratio:.4f}\n")
 
     # Calculate the initial ratio
     initial_ratio = ratios[0]
@@ -179,6 +184,11 @@ def main(folder, input_folder, output_folder):
     plt.savefig(os.path.join(output_folder, "recovery_rate_plot.png"))
     plt.savefig(os.path.join(f"out_img/recovery_rate_plot_{folder}.png"))
     # plt.show()
+    
+    # Write a txt file with the recovery rates
+    with open(os.path.join(output_folder, "recovery_rates.txt"), "w") as f:
+        for i, rate in enumerate(recovery_rates):
+            f.write(f"{hours[i]}h: {rate:.4f}%\n")
 
 
 # Function to model exponential decay
