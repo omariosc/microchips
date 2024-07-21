@@ -32,7 +32,6 @@ def process_image(
     for i in range(1, num_labels):
         if stats[i, cv2.CC_STAT_AREA] >= size_threshold:
             large_component_mask[labels == i] = 255
-
     edge_mask = cv2.GaussianBlur(large_component_mask, blur_kernel, 0)
     blurred_image = cv2.bitwise_and(image, image, mask=edge_mask)
     final_image = cv2.addWeighted(image, 0.7, blurred_image, 0.3, 0)
@@ -89,6 +88,22 @@ def process_image(
 
     # Combine original and processed images side by side
     combined = np.hstack((image, final_image))
+
+    # Get total number of pixels in mask (not 0)
+    total_area = np.sum(large_component_mask > 0)
+    # Apply mask to image
+    image[large_component_mask == 0] = 0
+    # Get number of pixels in mask that are not 0
+    oil_area = 1 - np.sum(image > 0) / (3 * total_area)
+
+    # open the file errors.txt and append the error, and the number of images
+    with open("errors.txt", "r") as f:
+        data = f.read()
+        if data:
+            error, count = data.split(",")
+            count = int(count) + 1
+    with open("errors.txt", "w") as f:
+        f.write(f"{float(error) + oil_area},{count}")
 
     return ratio, combined, image
 
