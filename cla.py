@@ -180,6 +180,10 @@ def main(folder, input_folder, output_folder):
     with open(os.path.join(output_folder, "ratios.txt"), "w") as f:
         for i, ratio in enumerate(ratios):
             f.write(f"{hours[i]}h: {ratio:.4f}\n")
+    # Write another file in the out_img folder
+    with open(os.path.join(f"out_img/ratios_{folder}.txt"), "w") as f:
+        for i, ratio in enumerate(ratios):
+            f.write(f"{hours[i]}h: {ratio:.4f}\n")
 
     # Calculate the initial ratio
     initial_ratio = ratios[0]
@@ -204,7 +208,10 @@ def main(folder, input_folder, output_folder):
     with open(os.path.join(output_folder, "recovery_rates.txt"), "w") as f:
         for i, rate in enumerate(recovery_rates):
             f.write(f"{hours[i]}h: {rate:.4f}%\n")
-
+    # Write another file in the out_img folder
+    with open(os.path.join(f"out_img/recovery_rates_{folder}.txt"), "w") as f:
+        for i, rate in enumerate(recovery_rates):
+            f.write(f"{hours[i]}h: {rate:.4f}%\n")
 
 # Function to model exponential decay
 def exponential_decay(x, a, b, c):
