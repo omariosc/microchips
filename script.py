@@ -4,6 +4,7 @@
 
 import os
 
-for i in ["0", "1", "2", "A", "B", "C", "D", "E", "X"]:
-    os.system(f"python3.12 cla.py --folder {i}")
+# for i in ["0", "1", "2", "A", "B", "C", "D", "E", "X"]:
+for i in ["0"]:
+    os.system(f"python3.12 vis.py --folder {i}")
     print(f"Done for {i}")
