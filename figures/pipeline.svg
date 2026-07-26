@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 560" width="1180" height="560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Oil segmentation and quantification pipeline</title>
+  <desc>Seven-stage image-analysis pipeline: time-lapse micrographs, dominant-colour extraction, colour-distance thresholding, morphological opening, connected-component filtering, blurred overlay, then area quantification and curve fitting.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a93a0"/>
+    </marker>
+    <linearGradient id="oilfade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#878874"/>
+      <stop offset="100%" stop-color="#d8dad2"/>
+    </linearGradient>
+    <style>
+      .card  { fill: #f7f8fa; stroke: #d9dde3; stroke-width: 1.5; rx: 10; }
+      .stage { fill: #ffffff; stroke: #c6ccd5; stroke-width: 1.5; }
+      .num   { fill: #1f4e79; }
+      .numt  { fill: #ffffff; font-size: 13px; font-weight: 700; text-anchor: middle; }
+      .ttl   { fill: #16202b; font-size: 14.5px; font-weight: 700; }
+      .sub   { fill: #5a6472; font-size: 12px; }
+      .mono  { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; fill: #7a4b12; }
+      .sect  { fill: #1f4e79; font-size: 12px; font-weight: 700; letter-spacing: 0.09em; }
+      .eq    { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; fill: #16202b; }
+    </style>
+  </defs>
+
+  <!-- ================= ROW 1: SEGMENTATION ================= -->
+  <text class="sect" x="34" y="34">SEGMENTATION</text>
+  <rect class="card" x="24" y="46" width="1132" height="196" rx="10"/>
+
+  <!-- input: time-lapse micrographs -->
+  <g transform="translate(44,74)">
+    <rect class="stage" x="0" y="0" width="128" height="96" rx="6"/>
+    <rect x="10" y="10" width="108" height="58" fill="url(#oilfade)" rx="3"/>
+    <circle cx="34" cy="28" r="8" fill="#dfe2da"/><circle cx="58" cy="46" r="10" fill="#dfe2da"/>
+    <circle cx="86" cy="24" r="7" fill="#e7e9e2"/><circle cx="99" cy="52" r="9" fill="#eef0ea"/>
+    <text class="sub" x="64" y="86" text-anchor="middle">T = 1 … 10 h</text>
+  </g>
+  <text class="ttl" x="108" y="196" text-anchor="middle">Time-lapse</text>
+  <text class="sub" x="108" y="213" text-anchor="middle">micromodel frames</text>
+  <line x1="180" y1="122" x2="212" y2="122" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- stage 1 -->
+  <g transform="translate(220,74)">
+    <rect class="stage" x="0" y="0" width="150" height="96" rx="6"/>
+    <circle class="num" cx="20" cy="20" r="11"/><text class="numt" x="20" y="24.5">1</text>
+    <rect x="42" y="40" width="26" height="26" fill="#878874" rx="3"/>
+    <rect x="74" y="40" width="26" height="26" fill="#9a9b86" rx="3"/>
+    <rect x="106" y="40" width="26" height="26" fill="#b6b7a4" rx="3"/>
+    <text class="mono" x="75" y="84" text-anchor="middle">#878874</text>
+  </g>
+  <text class="ttl" x="295" y="196" text-anchor="middle">Dominant colour</text>
+  <text class="sub" x="295" y="213" text-anchor="middle">k-means over pixel values</text>
+  <line x1="378" y1="122" x2="410" y2="122" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- stage 2 -->
+  <g transform="translate(418,74)">
+    <rect class="stage" x="0" y="0" width="150" height="96" rx="6"/>
+    <circle class="num" cx="20" cy="20" r="11"/><text class="numt" x="20" y="24.5">2</text>
+    <rect x="30" y="38" width="90" height="30" fill="#16202b" rx="3"/>
+    <circle cx="52" cy="53" r="9" fill="#ffffff"/><circle cx="78" cy="49" r="6" fill="#ffffff"/>
+    <circle cx="98" cy="58" r="7" fill="#ffffff"/>
+    <text class="mono" x="75" y="86" text-anchor="middle">‖BGR − c‖₂ &lt; 25</text>
+  </g>
+  <text class="ttl" x="493" y="196" text-anchor="middle">Colour threshold</text>
+  <text class="sub" x="493" y="213" text-anchor="middle">binary oil mask</text>
+  <line x1="576" y1="122" x2="608" y2="122" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- stage 3 -->
+  <g transform="translate(616,74)">
+    <rect class="stage" x="0" y="0" width="150" height="96" rx="6"/>
+    <circle class="num" cx="20" cy="20" r="11"/><text class="numt" x="20" y="24.5">3</text>
+    <rect x="30" y="38" width="90" height="30" fill="#16202b" rx="3"/>
+    <circle cx="52" cy="53" r="9" fill="#ffffff"/><circle cx="78" cy="49" r="6" fill="#ffffff"/>
+    <circle cx="98" cy="58" r="7" fill="#ffffff"/>
+    <path d="M126 40 l14 14 M140 40 l-14 14" stroke="#c00000" stroke-width="2.4" stroke-linecap="round"/>
+    <text class="mono" x="75" y="86" text-anchor="middle">open 3×3, ×2</text>
+  </g>
+  <text class="ttl" x="691" y="196" text-anchor="middle">Opening</text>
+  <text class="sub" x="691" y="213" text-anchor="middle">speckle noise removed</text>
+  <line x1="774" y1="122" x2="806" y2="122" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- stage 4 -->
+  <g transform="translate(814,74)">
+    <rect class="stage" x="0" y="0" width="150" height="96" rx="6"/>
+    <circle class="num" cx="20" cy="20" r="11"/><text class="numt" x="20" y="24.5">4</text>
+    <rect x="30" y="38" width="90" height="30" fill="#16202b" rx="3"/>
+    <circle cx="54" cy="53" r="10" fill="#548235"/><circle cx="82" cy="51" r="8" fill="#548235"/>
+    <circle cx="106" cy="58" r="3" fill="#c00000"/>
+    <text class="mono" x="75" y="86" text-anchor="middle">area ≥ 250 px</text>
+  </g>
+  <text class="ttl" x="889" y="196" text-anchor="middle">Component filter</text>
+  <text class="sub" x="889" y="213" text-anchor="middle">8-connectivity labelling</text>
+  <line x1="972" y1="122" x2="1004" y2="122" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- stage 5 -->
+  <g transform="translate(1012,74)">
+    <rect class="stage" x="0" y="0" width="124" height="96" rx="6"/>
+    <circle class="num" cx="20" cy="20" r="11"/><text class="numt" x="20" y="24.5">5</text>
+    <rect x="26" y="38" width="72" height="30" fill="#878874" rx="3" opacity="0.85"/>
+    <rect x="26" y="38" width="72" height="30" fill="none" stroke="#16202b" stroke-width="1.2" rx="3"/>
+    <text class="mono" x="62" y="86" text-anchor="middle">blur 5×5</text>
+  </g>
+  <text class="ttl" x="1074" y="196" text-anchor="middle">Overlay</text>
+  <text class="sub" x="1074" y="213" text-anchor="middle">0.7 raw + 0.3 masked</text>
+
+  <!-- ================= ROW 2: QUANTIFICATION ================= -->
+  <text class="sect" x="34" y="292">QUANTIFICATION</text>
+  <rect class="card" x="24" y="304" width="1132" height="232" rx="10"/>
+
+  <!-- equations -->
+  <g transform="translate(52,332)">
+    <rect class="stage" x="0" y="0" width="440" height="180" rx="8"/>
+    <circle class="num" cx="24" cy="26" r="11"/><text class="numt" x="24" y="30.5">6</text>
+    <text class="ttl" x="46" y="31">Area metrics, per frame</text>
+
+    <text class="eq" x="24" y="76">oil ratio  r(t) = A_oil(t) / A_total</text>
+    <text class="eq" x="24" y="106">recovery   R(t) = (r(t₀) − r(t)) / r(t₀) × 100 %</text>
+
+    <text class="sub" x="24" y="140">A_oil counts mask pixels retained after stage 4;</text>
+    <text class="sub" x="24" y="158">A_total is the full frame, so r is dimensionless.</text>
+  </g>
+
+  <line x1="500" y1="422" x2="532" y2="422" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- curve fitting -->
+  <g transform="translate(540,332)">
+    <rect class="stage" x="0" y="0" width="300" height="180" rx="8"/>
+    <circle class="num" cx="24" cy="26" r="11"/><text class="numt" x="24" y="30.5">7</text>
+    <text class="ttl" x="46" y="31">Temporal model</text>
+
+    <!-- mini axes -->
+    <line x1="40" y1="146" x2="266" y2="146" stroke="#aab2bd" stroke-width="1.3"/>
+    <line x1="40" y1="146" x2="40" y2="56" stroke="#aab2bd" stroke-width="1.3"/>
+    <path d="M40 66 C 96 122, 150 138, 266 141" fill="none" stroke="#c00000" stroke-width="2.2"/>
+    <circle cx="40" cy="66" r="3" fill="#1f4e79"/><circle cx="86" cy="108" r="3" fill="#1f4e79"/>
+    <circle cx="132" cy="130" r="3" fill="#1f4e79"/><circle cx="186" cy="138" r="3" fill="#1f4e79"/>
+    <circle cx="240" cy="140" r="3" fill="#1f4e79"/>
+    <text class="mono" x="152" y="90" text-anchor="middle">a·e^(−b t) + c</text>
+    <text class="sub" x="40" y="168">exponential decay, linear fallback</text>
+  </g>
+
+  <line x1="848" y1="422" x2="880" y2="422" stroke="#8a93a0" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- outputs -->
+  <g transform="translate(888,332)">
+    <rect class="stage" x="0" y="0" width="240" height="180" rx="8"/>
+    <text class="ttl" x="20" y="31">Outputs</text>
+    <text class="sub" x="20" y="60">ratios_&lt;run&gt;.txt</text>
+    <text class="sub" x="20" y="82">recovery_rates_&lt;run&gt;.txt</text>
+    <text class="sub" x="20" y="104">ratio_plot.png</text>
+    <text class="sub" x="20" y="126">recovery_rate_plot.png</text>
+    <text class="sub" x="20" y="148">segmentation_side_by_side.gif</text>
+    <text class="sub" x="20" y="170">combined_&lt;n&gt;.jpg</text>
+  </g>
+</svg>

@@ -1,11 +1,27 @@
-*.png
-*.jpg
-*.gif
+# Acquisition frames and generated analysis output
 img/
 out/
 out_img/
+visualisation/
 tmp/
+
+# Documents
 *.pdf
 *.pptx
 *.docx
-*.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+.DS_Store
+
+# Figures are generated, but the published set is committed
+*.png
+*.jpg
+*.gif
+!figures/*.png
+!figures/*.jpg
+!figures/*.gif

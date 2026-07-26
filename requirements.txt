@@ -1,0 +1,7 @@
+# Runtime dependencies for the segmentation pipeline and the demo.
+numpy>=1.24
+opencv-python>=4.8
+matplotlib>=3.7
+imageio>=2.31
+scipy>=1.10
+scikit-learn>=1.3

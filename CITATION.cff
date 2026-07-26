@@ -1,0 +1,64 @@
+cff-version: 1.2.0
+title: >-
+  Microchip Oil Segmentation: automated quantification of oil recovery in
+  microfluidic EOR experiments
+message: >-
+  If you use this software, please cite both the software itself and the paper
+  whose analysis it produced.
+type: software
+authors:
+  - given-names: Omar
+    family-names: Choudhry
+    affiliation: School of Computing, University of Leeds
+    website: 'https://omarchoudhry.co.uk'
+repository-code: 'https://github.com/omariosc/microchips'
+url: 'https://github.com/omariosc/microchips'
+abstract: >-
+  Computer-vision software for quantifying oil distribution in microfluidic
+  micromodel flooding experiments. Oil is segmented from time-lapse transmitted
+  light micrographs by k-means dominant-colour extraction followed by Euclidean
+  colour-distance thresholding, morphological opening and connected-component
+  area filtering. Per-frame oil area ratios are converted into tertiary oil
+  recovery curves and fitted with an exponential decay model. Written for the
+  micromodel flooding tests reported in Tliba et al. (2025), Journal of
+  Molecular Liquids.
+keywords:
+  - image segmentation
+  - computer vision
+  - opencv
+  - microfluidics
+  - enhanced oil recovery
+  - micromodel
+  - porous media
+  - scientific image analysis
+license: MIT
+year: 2025
+references:
+  - type: article
+    title: >-
+      Spontaneous in-situ emulsification and enhanced oil recovery using
+      functionalised silica nanoparticles: Insights from spontaneous imbibition
+      and micromodel flooding tests
+    authors:
+      - given-names: Louey
+        family-names: Tliba
+      - given-names: Mohamed
+        family-names: Edokali
+      - given-names: Thomas
+        family-names: Moore
+      - given-names: Omar
+        family-names: Choudhry
+      - given-names: Paul W. J.
+        family-names: Glover
+      - given-names: Robert
+        family-names: Menzel
+      - given-names: Ali
+        family-names: Hassanpour
+    journal: Journal of Molecular Liquids
+    volume: 424
+    start: 127021
+    year: 2025
+    doi: 10.1016/j.molliq.2025.127021
+    publisher:
+      name: Elsevier
+    license: CC-BY-NC-ND-4.0

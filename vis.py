@@ -56,8 +56,6 @@ def process_image(
         large_component_image = cv2.merge(
             (large_component_mask, large_component_mask, large_component_mask)
         )
-        # change all black to white
-        large_component_image[large_component_image == 0] = 255
         cv2.imwrite("visualisation/03_large_component_mask.jpg", large_component_image)
 
     # Apply Gaussian blur to smooth the edges

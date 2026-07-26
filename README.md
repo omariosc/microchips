@@ -1,52 +1,229 @@
-In the realm of microfluidic device analysis, the quantification of oil distributions via microscopic imaging demands a sophisticated integration of image processing techniques. This methodology hinges on the precise segmentation of oil within these devices, facilitated by advanced computational algorithms and tools. The process, programmed in Python, entails several intricate steps, each contributing uniquely to the extraction and analysis of relevant data.
+# Microchip Oil Segmentation
 
-### Image Segmentation and Color Analysis
+**Automated image analysis for quantifying oil recovery in microfluidic enhanced-oil-recovery experiments.**
 
-**Image Segmentation:**
-Image segmentation is a fundamental technique in digital image processing and computer vision, where an image is partitioned into multiple segments (sets of pixels, also known as image objects). The primary goal is to simplify or change the representation of an image into something more meaningful and easier to analyze. In this context, segmentation aims to identify regions within an image that contain oil, distinguishing them from the rest of the microchip.
+[![Paper](https://img.shields.io/badge/Paper-J.%20Molecular%20Liquids%20424%20(2025)%20127021-1f4e79?style=flat-square)](https://doi.org/10.1016/j.molliq.2025.127021)
+[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.molliq.2025.127021-0057B8?style=flat-square)](https://doi.org/10.1016/j.molliq.2025.127021)
+[![Open Access](https://img.shields.io/badge/Open%20Access-CC%20BY--NC--ND%204.0-orange?style=flat-square)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-image%20processing-5C3EE8?style=flat-square&logo=opencv&logoColor=white)](https://opencv.org/)
+[![Licence](https://img.shields.io/badge/Code%20licence-MIT-green?style=flat-square)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-archived-lightgrey?style=flat-square)](#project-status)
 
-The first step in this segmentation process involves identifying a base color for the oil. This is achieved by analyzing the image to determine the most prevalent colors that correspond to oil, employing a clustering technique on the pixel values. Clustering helps to identify and group similar colors, thereby facilitating the extraction of the dominant color represented in HEX code format. This dominant color serves as a reference point for creating a binary mask.
+This repository holds the computer-vision software written for the micromodel
+flooding tests in **Tliba *et al.* (2025)**, published in *Journal of Molecular
+Liquids*. The study evaluates surfactant-functionalised silica nanoparticles
+(ALS-NPs and SOS-NPs) for enhanced oil recovery. The code here turns ten-hour
+time-lapse micrographs of an oil-wet microfluidic chip into per-frame oil
+saturation measurements and the recovery curves reported in the paper.
 
-**HEX Codes and Color Comparison:**
-A HEX code is a six-digit, hexadecimal number used in HTML, CSS, SVG, and other computing applications to represent colors. The code is a combination of three byte hexadecimal numbers, each representing the intensity of red, green, and blue in the color respectively. For our purposes, once the dominant oil color is determined and represented as a HEX code, it is converted to the BGR (Blue, Green, Red) color space used by OpenCV. This conversion is crucial for the subsequent thresholding step, where we compare the color of each pixel in the image to this reference color to determine if it matches the characteristics of oil.
+---
 
-A binary mask is then generated where pixels that closely match the oil color (within a defined distance threshold) are set to white (representing oil), and all others are set to black. This is accomplished by computing the Euclidean distance between the color of each pixel and the target oil color. Pixels within the distance threshold are considered potential oil pixels.
+## The paper
 
-### Morphological Operations and Connected Components Analysis
+> **Spontaneous in-situ emulsification and enhanced oil recovery using functionalised silica nanoparticles: Insights from spontaneous imbibition and micromodel flooding tests**
+>
+> Louey Tliba, Mohamed Edokali, Thomas Moore, **Omar Choudhry**, Paul W. J. Glover, Robert Menzel, Ali Hassanpour
+>
+> *Journal of Molecular Liquids* **424** (2025) 127021
+> [https://doi.org/10.1016/j.molliq.2025.127021](https://doi.org/10.1016/j.molliq.2025.127021)
 
-Following the initial segmentation, the binary mask may still contain noise and artifacts—small, irrelevant regions incorrectly marked as oil due to their color similarity. To refine the segmentation, morphological operations are applied. Specifically, an opening operation (erosion followed by dilation) is used to disconnect and remove these small noise elements, improving the accuracy of the segmented areas. This step is critical as it enhances the quality of the binary mask by ensuring only significant oil regions are retained.
+### My contribution
 
-Connected component analysis further processes this refined mask by labeling each connected region of white pixels. This analysis helps categorize and filter these regions based on size, ignoring components smaller than a predefined threshold, thereby focusing analysis on substantial oil patches.
+I designed and built the image-analysis pipeline: segmentation of oil from the
+raw micrographs, quantification of oil saturation over time, and statistical
+modelling of the resulting recovery curves. In the paper's words, the movement
+of nanofluid through the microchip was analysed using
 
-### Statistical Analysis and Automation
+> "custom-developed software that integrates advanced statistical modelling and
+> automated image processing workflow (an OpenCV framework coupled with dynamic
+> thresholding and Gaussian blurring)"
 
-**Quantitative Analysis and Outputs:**
-The area of each significant oil patch is calculated and expressed as a ratio to the total image area, using the formula:
-\[ \text{Detected Oil Ratio} = \frac{\text{Area of Detected Oil}}{\text{Total Image Area}} \]
-This ratio is crucial for evaluating changes over time. To assess the effectiveness of the oil recovery process within the microchip, a recovery rate is also calculated using the equation:
-\[ \text{Recovery Rate} = 1 - \text{Detected Oil Ratio} \]
-These metrics are plotted over time using linear regression and exponential decay models, facilitating the temporal analysis of oil distribution dynamics.
+which "addressed one of the major challenges reported in previous methods: the
+reduction of false positives and the enhancement of accuracy in distinguishing
+oil from other phases". The tertiary recovery rates in **Fig. 13** of the paper
+are the direct output of this pipeline.
 
-**Python Libraries and Scripting:**
-The script is developed in Python, utilizing libraries such as OpenCV for image processing, NumPy for numerical operations, and Matplotlib for generating plots. Python is chosen for its extensive library support and active community, making it ideal for rapid prototyping in scientific research. OpenCV provides powerful tools for image manipulation, NumPy offers efficient handling of large numerical arrays, and Matplotlib enables the creation of informative visualizations.
+---
 
-The entire process is automated through a command-line driven script, enhancing usability and allowing for the processing of image series within specified directories. This automation generates comparative visual outputs, dynamic GIFs for visualizing temporal changes, and detailed statistical plots, ensuring a comprehensive analysis.
+## How it works
 
-### Considerations and Future Directions
+![Segmentation and quantification pipeline](figures/pipeline.svg)
 
-Despite the meticulous design of this methodology, the reliance on color segmentation introduces an inherent error rate due to potential variations in lighting, oil color uniformity, and image quality. However, this error is consistent across all images and does not impact the relative analysis of trends and relationships over time, making it a negligible concern for longitudinal and comparative studies.
+Oil appears in the micrographs as a distinctive olive tone against pale grey
+solid grains. The pipeline exploits that colour separation rather than relying
+on intensity alone:
 
-Future enhancements could include the adoption of more sophisticated pattern recognition algorithms, such as self-organizing maps (SOMs), which might offer refined segmentation capabilities. Nonetheless, the current approach's ability to further analyze images via connected components and morphological operations provides a balanced methodology that effectively addresses the primary objectives of this research.
+| Stage | Operation | Purpose |
+|:--|:--|:--|
+| 1 | k-means clustering over pixel values | Recover the dominant oil colour as a HEX reference (`#878874`) |
+| 2 | Euclidean colour distance in BGR, threshold `< 25` | Binary oil mask, tolerant of illumination drift |
+| 3 | Morphological opening, 3x3 kernel, 2 iterations | Remove speckle wrongly matched on colour alone |
+| 4 | Connected components, 8-connectivity, area `>= 250 px` | Discard residual fragments, keep genuine oil ganglia |
+| 5 | Gaussian blur (5x5) and weighted overlay | Soften mask edges for the visual comparison frames |
+| 6 | Pixel counting | Oil area ratio `r(t)` and recovery rate `R(t)` |
+| 7 | Exponential decay fit, linear fallback | Model the temporal trend in recovery |
 
-In conclusion, this detailed and technically robust methodology not only facilitates the accurate analysis of oil distributions in microfluidic devices but also underscores the potential of advanced image processing techniques in enhancing microfluidic research and applications.
+Recovery is expressed relative to the first frame:
 
-### Detailed Analysis of Software and Libraries Used in Image Processing
+```
+r(t) = A_oil(t) / A_total
+R(t) = (r(t0) - r(t)) / r(t0) x 100 %
+```
 
-The script developed for analyzing oil distributions within microfluidic devices leverages several sophisticated software libraries, each selected for their unique capabilities in handling different aspects of image processing. This section explores the roles these libraries play in the project, along with a comparative analysis of how they stand against potential alternatives.
+### Worked example
 
-- **OpenCV (Open Source Computer Vision Library)**: OpenCV is extensively utilized throughout the project primarily for its robust image processing capabilities. It handles the initial stages of image loading and manipulation efficiently, thanks to its comprehensive support for various image formats and color spaces. Critical tasks such as color conversion and the creation of binary masks for segmentation are performed using OpenCV. This library also facilitates advanced image transformations including morphological operations like erosion and dilation, which are pivotal in refining the segmentation results by removing noise and improving the definition of segmented regions. In comparison to other image processing libraries such as PIL/Pillow and Scikit-image, OpenCV offers superior performance, especially in real-time applications, due to its underlying implementation in C/C++. Unlike MATLAB, which is equally powerful but typically slower in execution and requires a license, OpenCV provides a free, open-source alternative with extensive functionalities.
-- **NumPy** NumPy is integral to handling large arrays of image data. It provides a high-performance multidimensional array object and tools for working with these arrays. Utilizing NumPy within the project facilitates efficient calculations over pixel data, essential for tasks such as analyzing segmented regions and computing area ratios. Its ability to perform complex mathematical operations quickly and with minimal syntax makes it an invaluable tool in the image processing workflow. While alternatives like MATLAB offer similar capabilities with possibly more built-in functions for specialized tasks, NumPy's integration within the Python ecosystem allows for seamless interaction with other libraries, making it an excellent choice for projects that benefit from the modularity and flexibility of Python.
-- **Matplotlib**: Visualization plays a crucial role in the interpretation of data within the project. Matplotlib is used to generate various plots and graphical outputs that provide insights into the dynamics of oil spread across microfluidic devices. It excels in producing customizable plots, from basic line graphs to complex heatmaps. Matplotlib's versatility makes it a preferred tool over alternatives such as Plotly or Seaborn when detailed customization is required, although it can be more verbose and complex to use.
-- **imageio**: For dynamic visualization, imageio is employed to compile sequential images into GIFs, providing a visual representation of the changes in oil distribution over time. This library is chosen for its simplicity in reading and writing a wide range of image formats, including GIFs, which enhances the project's ability to present findings in an accessible format. Compared to other libraries like PIL/Pillow, imageio offers a more straightforward interface for dealing with animations, though it may not provide as much control over the fine details of image manipulation.
-**Scikit-learn and SciPy**: The statistical analysis within the project is bolstered by tools from Scikit-learn and SciPy. Linear regression models from Scikit-learn and curve fitting techniques from SciPy are applied to model and analyze the temporal changes in oil area ratios. These libraries provide robust, efficient methods for statistical modeling, fitting into the project's needs for detailed and reliable data analysis. While other platforms like R or MATLAB might offer more specialized statistical tools, the integration of Scikit-learn and SciPy with Python allows for a streamlined workflow that can easily be adjusted and extended with other Python-based tools.
-- **Scholarly Context and Justification**: The selection of these libraries provides a comprehensive framework that balances performance, ease of integration, and breadth of functionality. OpenCV and NumPy form the core of image manipulation and data handling, ensuring the project can process large datasets efficiently. Matplotlib and imageio add a layer of interpretability through their robust visualization capabilities. Meanwhile, Scikit-learn and SciPy extend the project's capacity to analyze and model data statistically. This blend of tools is chosen over alternatives primarily for their performance and compatibility with the Python programming environment, which offers flexibility and scalability essential for adapting the project to future research needs. The open-source nature of these tools also ensures that the project remains accessible and modifiable, supporting a broad range of customization and extension possibilities critical for ongoing research in microfluidic image analysis.
+Every stage, run end to end on a frame from the demo sequence:
+
+![Pipeline stages](figures/pipeline-stages.png)
+
+The mask tightens at each step, from 37.61 % of the frame after colour
+thresholding to 36.81 % after component filtering, the difference being noise
+that the later stages remove.
+
+Segmentation tracked across the full ten-frame sequence:
+
+![Original versus segmented, animated](figures/demo-sequence.gif)
+
+---
+
+## Measured results
+
+`Results/` holds the pipeline output for the nine micromodel flooding runs
+analysed for the paper: oil area ratio and recovery rate at hourly intervals
+across the ten-hour acquisition.
+
+![Measured recovery curves](figures/measured-recovery.png)
+
+| Run | Final recovery | Run | Final recovery | Run | Final recovery |
+|:--|--:|:--|--:|:--|--:|
+| `0` | 76.80 % | `B` | 15.13 % | `E` | 38.37 % |
+| `1` | 12.46 % | `C` | 85.56 % | `X` | 38.53 % |
+| `2` | 75.51 % | `D` | 5.84 % | | |
+| `A` | 79.68 % | | | | |
+
+These are the raw per-run measurements. Published Fig. 13 aggregates repeat runs
+per fluid, reporting roughly 6 % for unmodified SiO<sub>2</sub>, 38 % for the ALS
+and SOS surfactants alone, 74 % for ALS-NPs and 80 % for SOS-NPs.
+
+A per-frame mask-purity check accumulated in `errors.txt` averages **0.82 % over
+89 analysed frames**. Because that bias is consistent across every image, it does
+not affect the relative trends the study depends on.
+
+### The experiment
+
+<img src="figures/micromodel-fov.png" alt="Oil-saturated micromodel field of view" width="520">
+
+The imaged region: a physical rock network etched into a microfluidic chip,
+saturated with crude oil (olive) between solid grains (pale grey). Reproduced
+from Fig. 1 of the paper.
+
+<details>
+<summary><b>Published Fig. 13, tertiary oil recovery rates</b></summary>
+
+<br>
+
+<img src="figures/paper-fig13-recovery.png" alt="Published tertiary oil recovery rates" width="620">
+
+Reproduced from Tliba *et al.* (2025), *Journal of Molecular Liquids* **424**,
+127021. © 2025 The Authors, published by Elsevier B.V. under
+[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+</details>
+
+---
+
+## Repository layout
+
+```
+cla.py                    Full analysis: segment a run, write ratios, recovery rates, plots and GIF
+vis.py                    Single-frame variant that also saves each intermediate stage
+script.py                 Batch driver across the nine run folders
+rename.py                 Collect per-run outputs into Results/
+archive/backup.py         Earlier exploratory version (k-means colour extraction, CLAHE)
+
+demo/make_demo_data.py    Generate a synthetic ten-frame micromodel sequence
+demo/run_demo.py          Run the pipeline over it and build the figures in this README
+scripts/plot_results.py   Plot the measured results held in Results/
+
+Results/                  Per-run oil area ratios and recovery rates (the measured data)
+figures/                  Figures used above
+docs/methodology.md       Original long-form methodology and library-selection notes
+errors.txt                Accumulated mask-purity metric and frame count
+```
+
+## Reproducing the figures
+
+The original micrographs are not redistributed here. The demo instead generates a
+synthetic sequence with the same visual characteristics the pipeline was tuned
+for, so everything below runs from a clean clone:
+
+```bash
+git clone https://github.com/omariosc/microchips.git
+cd microchips
+pip install -r requirements.txt
+
+python demo/make_demo_data.py     # writes img/DEMO/T=1h.jpg ... T=10h.jpg
+python demo/run_demo.py           # writes pipeline-stages.png, demo-sequence.gif, demo-recovery.png
+python scripts/plot_results.py    # writes measured-recovery.png from Results/
+```
+
+To run against real acquisitions, place frames named `T=1h.jpg` ... `T=Nh.jpg` in
+`img/<run>/` and call:
+
+```bash
+python cla.py --folder <run>
+```
+
+Outputs land in `out/<run>/` and are mirrored into `out_img/`.
+
+> **Note.** `cla.py` appends to the tracked `errors.txt` as a side effect of each
+> run, so the committed value there is the record from the published analysis
+> (89 frames). Restore it with `git checkout -- errors.txt` after experimenting.
+
+## Project status
+
+Archived. The analysis is complete and published, and the code is preserved as
+the computational record behind the micromodel results. Issues and pull requests
+are not monitored.
+
+## Citation
+
+If you use this software, please cite both the paper and the software.
+Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
+
+```bibtex
+@article{Tliba2025Spontaneous,
+  title   = {Spontaneous in-situ emulsification and enhanced oil recovery using
+             functionalised silica nanoparticles: Insights from spontaneous
+             imbibition and micromodel flooding tests},
+  author  = {Tliba, Louey and Edokali, Mohamed and Moore, Thomas and
+             Choudhry, Omar and Glover, Paul W. J. and Menzel, Robert and
+             Hassanpour, Ali},
+  journal = {Journal of Molecular Liquids},
+  volume  = {424},
+  pages   = {127021},
+  year    = {2025},
+  doi     = {10.1016/j.molliq.2025.127021}
+}
+
+@software{Choudhry2025Microchips,
+  title  = {Microchip Oil Segmentation: automated quantification of oil recovery
+            in microfluidic EOR experiments},
+  author = {Choudhry, Omar},
+  year   = {2025},
+  url    = {https://github.com/omariosc/microchips}
+}
+```
+
+## Licence
+
+Code is released under the [MIT licence](LICENSE).
+
+Figures reproduced from the paper remain © 2025 The Authors, published by
+Elsevier B.V. under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/),
+and are included here under that licence with attribution.
+
+---
+
+Built by [Omar Choudhry](https://omarchoudhry.co.uk), School of Computing, University of Leeds.
